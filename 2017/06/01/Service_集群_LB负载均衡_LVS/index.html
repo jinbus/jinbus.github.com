@@ -6,14 +6,24 @@
   <meta name="renderer" content="webkit">
   <meta http-equiv="X-UA-Compatible" content="IE=edge" >
   <link rel="dns-prefetch" href="http://yoursite.com">
-  <title>Hexo</title>
+  <title>LB(负载均衡)解决方案,LVS介绍 | Hexo</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta property="og:type" content="website">
-<meta property="og:title" content="Hexo">
-<meta property="og:url" content="http://yoursite.com/index.html">
+  <meta name="description" content="-">
+<meta name="keywords" content="Linux,内核,负载均衡,集群">
+<meta property="og:type" content="article">
+<meta property="og:title" content="LB(负载均衡)解决方案,LVS介绍">
+<meta property="og:url" content="http://yoursite.com/2017/06/01/Service_集群_LB负载均衡_LVS/index.html">
 <meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="-">
+<meta property="og:image" content="http://yoursite.com/2017/06/images/article/lvs/lvs_1.jpg">
+<meta property="og:image" content="http://yoursite.com/2017/06/images/article/lvs/lvs_2.jpg">
+<meta property="og:image" content="http://yoursite.com/2017/06/images/article/lvs/lvs_3.jpg">
+<meta property="og:image" content="http://yoursite.com/2017/06/images/article/colony/colony_2.jpg">
+<meta property="og:updated_time" content="2018-01-10T03:24:14.517Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Hexo">
+<meta name="twitter:title" content="LB(负载均衡)解决方案,LVS介绍">
+<meta name="twitter:description" content="-">
+<meta name="twitter:image" content="http://yoursite.com/2017/06/images/article/lvs/lvs_1.jpg">
   
     <link rel="alternative" href="/atom.xml" title="Hexo" type="application/atom+xml">
   
@@ -149,64 +159,14 @@
             <canvas data-colors="#eaeaea" data-sectionHeight="100" data-contentId="js-content" id="myCanvas1" class="anm-canvas"></canvas>
           </div>
           <div id="js-content" class="content-ll">
-            
-  
-    <article id="post-Service_集群_LB负载均衡_LVS_DR模型实验" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-      
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2018/01/10/Service_集群_LB负载均衡_LVS_DR模型实验/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-
-  
-    <article id="post-Service_集群_LB负载均衡_LVS" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+            <article id="post-Service_集群_LB负载均衡_LVS" class="article article-type-post " itemscope itemprop="blogPost">
   <div class="article-inner">
     
       <header class="article-header">
         
   
-    <h1 itemprop="name">
-      <a class="article-title" href="/2017/06/01/Service_集群_LB负载均衡_LVS/">LB(负载均衡)解决方案,LVS介绍</a>
+    <h1 class="article-title" itemprop="name">
+      LB(负载均衡)解决方案,LVS介绍
     </h1>
   
 
@@ -219,10 +179,178 @@
     
     <div class="article-entry" itemprop="articleBody">
       
-        <p>-<br>
-        
-          <a class="article-more-a" href="/2017/06/01/Service_集群_LB负载均衡_LVS/#more">more >></a>
-        
+        <p>-<br><a id="more"></a></p>
+<h1 id="LVS"><a href="#LVS" class="headerlink" title="LVS"></a>LVS</h1><h2 id="相关文章"><a href="#相关文章" class="headerlink" title="相关文章"></a>相关文章</h2><ul>
+<li>以下是LVS官网提供的4篇文章：（非常详细，我觉得有兴趣还是看官方文档比较正宗吧！！）<ul>
+<li><a href="http://www.linuxvirtualserver.org/zh/lvs1.html" target="_blank" rel="noopener">http://www.linuxvirtualserver.org/zh/lvs1.html</a></li>
+<li><a href="http://www.linuxvirtualserver.org/zh/lvs2.html" target="_blank" rel="noopener">http://www.linuxvirtualserver.org/zh/lvs2.html</a></li>
+<li><a href="http://www.linuxvirtualserver.org/zh/lvs3.html" target="_blank" rel="noopener">http://www.linuxvirtualserver.org/zh/lvs3.html</a></li>
+<li><a href="http://www.linuxvirtualserver.org/zh/lvs4.html" target="_blank" rel="noopener">http://www.linuxvirtualserver.org/zh/lvs4.html</a></li>
+</ul>
+</li>
+</ul>
+<h2 id="实现"><a href="#实现" class="headerlink" title="实现"></a>实现</h2><ul>
+<li>lvs是基于传输层实现的,也就是说lvs 是工作在内核空间,通过内核空间中的tcp协议栈的功能实现对访问请求的转发,伪装,劫持,改变.</li>
+<li>tcp协议栈中包含五个基本的钩子函数,即Netfilrter(PREROUTING,FORWARD,INPUT,OUTPUT,POSTROUTING),而LVS的实现通过围绕INPUT函数进行实现.</li>
+<li>即改变LVS的正常处理流程,将经由INPUT的;流量直接转发至POSTROUTING.</li>
+<li>LVS 的实现同样是在内核中.在编译时可以选择LVS功能.</li>
+<li>LVS可以基于端口进行转发,即根据目标的Ip与端口(即运行LVS的主机),将其转发值后端的特定主机(根据算法 )<ul>
+<li>所以需要在前端也就时INPUT链上定义需要进行转发的流量,也就是根据数据包中的目标端口与目标ip进行筛选,即只将访问后端服务的流量进行以负载均衡为目的的流量分发.</li>
+<li>同时也要在前端的LVS主机上申明后端的主机,即提供服务的主机的地址,(或标识).以实现在转发时可以将流量定位到该主机,</li>
+</ul>
+</li>
+</ul>
+<h2 id="lvs-基本拓扑"><a href="#lvs-基本拓扑" class="headerlink" title="lvs 基本拓扑"></a>lvs 基本拓扑</h2><ul>
+<li><img src="../../images/article/lvs/lvs_1.jpg" alt=""><h2 id="LVS的组成"><a href="#LVS的组成" class="headerlink" title="LVS的组成"></a>LVS的组成</h2></li>
+<li>LVS分为两部分<ul>
+<li>工作在用户空间,提供管理底层即内核空间的程序的配置信息的管理工具,提供对规则的增加,删除,改变,查找等服务.</li>
+<li>工作在内核空间.提供基于底层的实现,即工作于INPUT链上的程序</li>
+</ul>
+</li>
+</ul>
+<h2 id="LVS-管理工具"><a href="#LVS-管理工具" class="headerlink" title="LVS 管理工具"></a>LVS 管理工具</h2><ul>
+<li><p>ipvsadm</p>
+<ul>
+<li><p>管理本机的集群服务</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"> ipvsadm -A|E -t|u|f service-address [-s scheduler][-p [timeout]] [-M netmask] [-b <span class="built_in">sched</span>-flags]</span><br><span class="line">ipvsadm -D -t|u|f service-address</span><br><span class="line">ipvsadm -C</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>管理集群服务中的后端RS地址表</p>
+</li>
+<li><p>保存,重载</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"> ipvsadm -R</span><br><span class="line">ipvsadm -S [-n]</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>查看清空</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"> ipvsadm -L|l [options]</span><br><span class="line">ipvsadm -C</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>计数器置零</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ipvsadm -Z [-t|u|f service-address]</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+</li>
+</ul>
+<h2 id="LVS-内核空间实现"><a href="#LVS-内核空间实现" class="headerlink" title="LVS 内核空间实现"></a>LVS 内核空间实现</h2><ul>
+<li><p>内核空间的实现叫做 ipvs(ip虚拟服务)</p>
+<ul>
+<li>查看编译情况<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"> 可以在/boot/config 文件中查看 编译进内核的lvs情况</span><br><span class="line">grep -i -A 10 <span class="string">'IPVS'</span> /boot/config........</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+</li>
+<li><p>工作模式 ,或者成为架构类型</p>
+<ul>
+<li>lvs-nat<ul>
+<li>多目标的DNAT(iptables中的概念)模型.</li>
+<li>是通过修改请求报文的目标Ip地址,如果有必要同时修改端口.</li>
+<li>实现思路:前端lvs进行请求的包的接受,在lvs接受后,通过kernel中nat的功能在将请求的数据包中的地址,目标地址进行改变,然后将改变的数据包转发出去,并保证改变的数据包可以被后端的rs接收.在rs发出响应包时继续通过前端的lvs进行修改并转发</li>
+<li>具体实现为:前端的LVS接收来自于互联网的http资源请求报文.在kernel中的input链后截获,更改数据包中的请求地址为设定好的后端众多的RS中之一,更改的数据包强制指定由POSTROUTING发出.发出接口为DIP接口(可以是物理上的或逻辑上的).传送至后端RS,经由RS处理后.响应包经由路由表查表转发(路由必须指向LVS的DIP),在LVS接收到响应报文后更改响应报文的源ip地址为VIP地址.</li>
+<li><img src="../../images/article/lvs/lvs_2.jpg" alt=""></li>
+</ul>
+</li>
+<li>lvs-dr<ul>
+<li>通过修改目标请求报文中的目标MAC地址实现,数据包重定向功能. 同时为了规避前端lvs 处理流量过大成为性能瓶颈的情况,将rs响应的数据包不在返回至lvs主机,而是直接进行路由</li>
+<li>实现思路.前端的lvs接收到数据的请求包后,修改请求包中的mac为rs中某一个mac地址,(获取mac地址通过mac的广播包,)其他不变,然后内部转发到POSTROUTING,实现数据包的转发,在rs接收数据包并处理完成后.数据包以源地址为vip进行发送.直接通过路由进行转发</li>
+<li>具体实现为:前端的LVS接收到请求数据包时,在数据包经过INPUT链时,选择转发到后端的服务器,并将请求的数据包第目标MAC地址转换为将要发送到的后端服务器的MAC地址.(MAC的地址获取通过同一个物理网段中的广播实现,在接受到arp广播时如果与记录在本机的RS地址一致则记录该IP地址对应的MAC地址)然后转发致POSRROUTING,从DIP端口发送出经过交换机,转发致对应MAC地址的RS主机.RS的物理网卡接收,在由内部转发至配置了与VIP相同IP地址的lo网卡,lo网卡接收并传送到用户空间进行处理,当处理完成,发送响应报文对请求报文进行响应.响应报文会被定向由lo网卡进行发送,然后内部转发至RIP网络口.RIP再次转发,转发至与RIP处于同一网段的路由器接口.</li>
+<li><img src="../../images/article/lvs/lvs_3.jpg" alt=""></li>
+</ul>
+</li>
+<li>lvs-tun<ul>
+<li>采用隧道进行实现,即在ip的包头外在打一层3层tiger,即在原有基础上在进行一次3层封装.但是再次封装时,应符合当前网络环境的MTU</li>
+</ul>
+</li>
+<li>lvs-fullnat<ul>
+<li>通过修改请求报文中的源ip与目的ip,转发至后端,后端处理完成后在,响应报文在转发至LVS,lvs再次修改源目ip地址,发给client.后端主机接收到的包将认为为前端lvs主机发起的访问.此种配置可以跨网络.</li>
+<li>整体思路为,前端lvs 接受请求数据,然后通过一切可以实现的技术手段将数据包转发至后端主机,后端主机进行真正的请求处理,并生成响应包,以可以正常完成本次通信的方式进行路由.</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><h5 id="调度算法"><a href="#调度算法" class="headerlink" title="调度算法"></a>调度算法</h5><ul>
+<li>算法可以分为静态算法与动态算法,静态算法指仅根据算法本身进行调度,而不去关心服务器的状态性能等相关信息,而动态算法会考虑后端服务器的状态等信息.</li>
+<li><h5 id="静态方法"><a href="#静态方法" class="headerlink" title="静态方法"></a>静态方法</h5><ul>
+<li>rr :轮循<ul>
+<li>轮询算法，它将请求依次分配给不同的rs节点，也就是RS节点中均摊分配。这种算法简单，但只适合于RS节点处理性能差不多的情况</li>
+</ul>
+</li>
+<li>wrr :加权轮循<ul>
+<li>加权轮训调度，它将依据不同RS的权值分配任务。权值较高的RS将优先获得任务，并且分配到的连接数将比权值低的RS更多。相同权值的RS得到相同数目的连接数。在数量足够大的场景中（即能发挥出加权轮询特性）后端最终处理的请求总数应为：请求总数*（本机权重/所有后端权重总和）</li>
+</ul>
+</li>
+<li>sh :源地址hash,<ul>
+<li>来自同一client的请求将被调度至同一rs</li>
+<li>源地址哈希调度（source hashing）以源地址为关键字查找一个静态hash表来获得需要的RS</li>
+</ul>
+</li>
+<li>dh :目标地址hash,<ul>
+<li>基于url的hash.即访问资源的hash,将访问同一资源的请求发送至后端同一主机.</li>
+<li>目的地址哈希调度（destination hashing）以目的地址为关键字查找一个静态hash表来获得需要的RS</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><h5 id="动态方法-最终以Overhead决定优先级"><a href="#动态方法-最终以Overhead决定优先级" class="headerlink" title="动态方法 (  最终以Overhead决定优先级.)"></a>动态方法 (  最终以Overhead决定优先级.)</h5><ul>
+<li><p>LC</p>
+<ul>
+<li>已连接数为选择条件,连接数量最少的RS优先选择.当overhead一致时,在overhead列表中自上而下<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">计算方法为:overhead=活动连接数*256+非活动连接数</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+</li>
+<li><p>WLC</p>
+<ul>
+<li>最终本机处理的请求为 ：请求总数*（本机权重值/所有权重之和）</li>
+<li>初始时所有的overhead 都为0<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Overhead=(activeconns*256+inactiveconns)/weight</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+</li>
+<li><p>SED</p>
+<ul>
+<li>初始连接高权重优先<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Overhead=(activeconns+1)*256/weight</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+</li>
+<li><p>NQ</p>
+<ul>
+<li>第一轮均匀分配，后续SED</li>
+</ul>
+</li>
+<li>LBLC<ul>
+<li>动态的DH算法，使用场景：根据负载状态实现正向代理</li>
+</ul>
+</li>
+<li>LBLCR<ul>
+<li>带复制功能的LBLC解决LBLC负载不均衡问题，从负载重的复制到负载轻的RS</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h2 id="前端调度的问题-session"><a href="#前端调度的问题-session" class="headerlink" title="前端调度的问题(session)"></a>前端调度的问题(session)</h2><ul>
+<li>httpd协议时无连接的协议,所以当后台存在调度系统时,主机无法确定主机的身份.</li>
+<li>为了追踪客户端身份信息,所以使用了 cookie.而cookie在服务端对应了一个session ,当后台进行多服务器之间的调度时,session只存在一台服务器上(或 session只能被一台服务器访问时)在同一用户发生调度请求被其他服务器处理时,无法接续跟踪该用户身份.即无法做到持续跟踪</li>
+<li><p><img src="../../images/article/colony/colony_2.jpg" alt=""></p>
+</li>
+<li><h5 id="LVS的session保持"><a href="#LVS的session保持" class="headerlink" title="LVS的session保持"></a>LVS的session保持</h5><ul>
+<li>session绑定:<ul>
+<li>将同一个用户的访问请求,始终转发至后端同一rs服务器上,<ul>
+<li>实现思路在内部创建一个表,记录源地址与后端rs的对应关系.在一定的时间内,将该用户的请求发往后端的同一主机.</li>
+<li>对用户的身份识别可以实现基于ip的哈希也可以使用基于cookie的哈希</li>
+<li>当其中某一台后端主机主机宕机,该主机上的session将丢失.</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>session集群<ul>
+<li>每个后端主机都将,自己的session信息发送给其他主机一份,即每个后端主机保存的session都是全部的session.</li>
+</ul>
+</li>
+<li>session服务器<ul>
+<li>使用文件共享服务器实现,将所有的session都保存在session服务器上.</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
       
 
       
@@ -256,16 +384,84 @@
       
 
       
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2017/06/01/Service_集群_LB负载均衡_LVS/">展开全文 >></a>
-        </p>
-      
 
+      
+        
+<div class="share-btn share-icons tooltip-left">
+  <div class="tooltip tooltip-east">
+    <span class="tooltip-item">
+      <a href="javascript:;" class="share-sns share-outer">
+        <i class="icon icon-share"></i>
+      </a>
+    </span>
+    <span class="tooltip-content">
+      <div class="share-wrap">
+        <div class="share-icons">
+          <a class="weibo share-sns" href="javascript:;" data-type="weibo">
+            <i class="icon icon-weibo"></i>
+          </a>
+          <a class="weixin share-sns wxFab" href="javascript:;" data-type="weixin">
+            <i class="icon icon-weixin"></i>
+          </a>
+          <a class="qq share-sns" href="javascript:;" data-type="qq">
+            <i class="icon icon-qq"></i>
+          </a>
+          <a class="douban share-sns" href="javascript:;" data-type="douban">
+            <i class="icon icon-douban"></i>
+          </a>
+          <a class="qzone share-sns" href="javascript:;" data-type="qzone">
+            <i class="icon icon-qzone"></i>
+          </a>
+          <a class="facebook share-sns" href="javascript:;" data-type="facebook">
+            <i class="icon icon-facebook"></i>
+          </a>
+          <a class="twitter share-sns" href="javascript:;" data-type="twitter">
+            <i class="icon icon-twitter"></i>
+          </a>
+          <a class="google share-sns" href="javascript:;" data-type="google">
+            <i class="icon icon-google"></i>
+          </a>
+        </div>
+      </div>
+    </span>
+  </div>
+</div>
+
+<div class="page-modal wx-share js-wx-box">
+    <a class="close js-modal-close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <div class="wx-qrcode">
+      <img src="//pan.baidu.com/share/qrcode?url=http://yoursite.com/2017/06/01/Service_集群_LB负载均衡_LVS/" alt="微信分享二维码">
+    </div>
+</div>
+
+<div class="mask js-mask"></div>
       
       <div class="clearfix"></div>
     </div>
   </div>
 </article>
+
+  
+<nav id="article-nav">
+  
+    <a href="/2018/01/10/Service_集群_LB负载均衡_LVS_DR模型实验/" id="article-nav-newer" class="article-nav-link-wrap">
+      <i class="icon-circle-left"></i>
+      <div class="article-nav-title">
+        
+          (no title)
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2017/06/01/Service_集群_LB负载均衡_LVS_NAT模型实现/" id="article-nav-older" class="article-nav-link-wrap">
+      <div class="article-nav-title">LB(负载均衡)解决方案,LVS的NAT模型实验</div>
+      <i class="icon-circle-right"></i>
+    </a>
+  
+</nav>
+
 
 <aside class="wrap-side-operation">
     <div class="mod-side-operation">
@@ -280,266 +476,34 @@
         </div>
         
         
-    </div>
-</aside>
-
-
-
-
-
-  
-    <article id="post-Service_集群_LB负载均衡_LVS_NAT模型实现" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2017/06/01/Service_集群_LB负载均衡_LVS_NAT模型实现/">LB(负载均衡)解决方案,LVS的NAT模型实验</a>
-    </h1>
-  
-
-        
-        <a href="/2017/06/01/Service_集群_LB负载均衡_LVS_NAT模型实现/" class="archive-article-date">
-  	<time datetime="2017-06-01T13:56:56.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2017-06-01</time>
-</a>
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>-<br>
-        
-          <a class="article-more-a" href="/2017/06/01/Service_集群_LB负载均衡_LVS_NAT模型实现/#more">more >></a>
-        
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color1">Linux</a>
-        		</li>
-      		 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">内核</a>
-        		</li>
-      		 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color5">负载均衡</a>
-        		</li>
-      		 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">集群</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-      
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2017/06/01/Service_集群_LB负载均衡_LVS_NAT模型实现/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
+        <div class="toc-container tooltip-left">
+            <i class="icon-font icon-category"></i>
+            <div class="tooltip tooltip-east">
+                <span class="tooltip-item">
+                </span>
+                <span class="tooltip-content">
+                    <div class="toc-article">
+                    <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#LVS"><span class="toc-number">1.</span> <span class="toc-text">LVS</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#相关文章"><span class="toc-number">1.1.</span> <span class="toc-text">相关文章</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#实现"><span class="toc-number">1.2.</span> <span class="toc-text">实现</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#lvs-基本拓扑"><span class="toc-number">1.3.</span> <span class="toc-text">lvs 基本拓扑</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#LVS的组成"><span class="toc-number">1.4.</span> <span class="toc-text">LVS的组成</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#LVS-管理工具"><span class="toc-number">1.5.</span> <span class="toc-text">LVS 管理工具</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#LVS-内核空间实现"><span class="toc-number">1.6.</span> <span class="toc-text">LVS 内核空间实现</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#调度算法"><span class="toc-number">1.6.0.0.1.</span> <span class="toc-text">调度算法</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#静态方法"><span class="toc-number">1.6.0.0.2.</span> <span class="toc-text">静态方法</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#动态方法-最终以Overhead决定优先级"><span class="toc-number">1.6.0.0.3.</span> <span class="toc-text">动态方法 (  最终以Overhead决定优先级.)</span></a></li></ol></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#前端调度的问题-session"><span class="toc-number">1.7.</span> <span class="toc-text">前端调度的问题(session)</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#LVS的session保持"><span class="toc-number">1.7.0.0.1.</span> <span class="toc-text">LVS的session保持</span></a></li></ol></li></ol></li></ol></li></ol></li></ol>
+                    </div>
+                </span>
             </div>
         </div>
         
-        
     </div>
 </aside>
 
 
 
-
-
-  
-    <article id="post-Service_集群_介绍" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2017/06/01/Service_集群_介绍/">集群介绍</a>
-    </h1>
-  
-
-        
-        <a href="/2017/06/01/Service_集群_介绍/" class="archive-article-date">
-  	<time datetime="2017-06-01T13:56:56.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2017-06-01</time>
-</a>
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>-<br>
-        
-          <a class="article-more-a" href="/2017/06/01/Service_集群_介绍/#more">more >></a>
-        
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color1">Linux</a>
-        		</li>
-      		 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">集群</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-      
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2017/06/01/Service_集群_介绍/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-
-  
-    <article id="post-安装_mariadb10.1.10" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2016/06/01/安装_mariadb10.1.10/">在centos 6 上安装指定版本的mariadb</a>
-    </h1>
-  
-
-        
-        <a href="/2016/06/01/安装_mariadb10.1.10/" class="archive-article-date">
-  	<time datetime="2016-06-01T13:56:56.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2016-06-01</time>
-</a>
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>-<br>
-        
-          <a class="article-more-a" href="/2016/06/01/安装_mariadb10.1.10/#more">more >></a>
-        
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">数据库</a>
-        		</li>
-      		 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">mariadb</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-      
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2016/06/01/安装_mariadb10.1.10/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-
   
   
+  
+
+  
+
+  
+
+  
+
 
 
           </div>
@@ -561,8 +525,8 @@
     <script>
 	var yiliaConfig = {
 		mathjax: false,
-		isHome: true,
-		isPost: false,
+		isHome: false,
+		isPost: true,
 		isArchive: false,
 		isTag: false,
 		isCategory: false,
